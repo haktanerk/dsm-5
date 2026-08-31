@@ -1,1 +1,101 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSM-5 Hızlı Başvuru</title>
+    <!-- Supabase JS kütüphanesini dışarıdan çağırıyoruz -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --primary-color: #2c3e50; --bg-color: #f8f9fa; --border-color: #dee2e6; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg-color); color: #333; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { color: var(--primary-color); text-align: center; margin-bottom: 20px; }
+        #searchBox { width: 100%; padding: 15px; font-size: 16px; border: 2px solid var(--border-color); border-radius: 8px; margin-bottom: 20px; outline: none; box-sizing: border-box; }
+        #searchBox:focus { border-color: var(--primary-color); }
+        .diagnosis-card { background-color: white; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .diagnosis-header { padding: 15px 20px; font-size: 18px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background-color: white; }
+        .diagnosis-header:hover { background-color: #f1f3f5; }
+        .diagnosis-header span.category { font-size: 12px; color: #888; font-weight: normal; margin-left: 10px; }
+        .diagnosis-content { display: none; padding: 20px; border-top: 1px solid var(--border-color); line-height: 1.6; }
+        .diagnosis-card.active .diagnosis-content { display: block; }
+        .loading { text-align: center; font-size: 18px; color: #666; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <h1>DSM-5 Hızlı Başvuru</h1>
+    
+    <input type="text" id="searchBox" placeholder="Tanı ara (Örn: Şizofreni)..." onkeyup="filterDiagnoses()">
+    <div id="loadingMessage" class="loading">Veriler Supabase'den yükleniyor...</div>
+    <div id="diagnosisList"></div>
+
+    <script>
+        // Supabase Bağlantı Bilgilerin
+        const supabaseUrl = 'https://gmovzycewcwvbzrltdgl.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdtb3Z6eWNld2N3dmJ6cmx0ZGdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxMjA5ODUsImV4cCI6MjEwMzY5Njk4NX0.6c2PZf7gevBbMcSE7kqfBmqd2x4Z_4-HRgJYAldb_K8';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        let allDiagnoses = [];
+
+        // Supabase'den verileri çeken asenkron fonksiyon
+        async function fetchDiagnoses() {
+            const { data, error } = await supabase
+                .from('dsm_diagnoses')
+                .select('*');
+
+            if (error) {
+                console.error('Veri çekme hatası:', error);
+                document.getElementById('loadingMessage').innerText = "Veriler yüklenirken hata oluştu!";
+                return;
+            }
+
+            allDiagnoses = data;
+            
+            if(allDiagnoses.length === 0) {
+                 document.getElementById('loadingMessage').innerText = "Veritabanına henüz tanı eklenmemiş. Lütfen SQL ile tanıları ekleyin.";
+                 return;
+            }
+
+            document.getElementById('loadingMessage').style.display = 'none';
+            renderDiagnoses(allDiagnoses);
+        }
+
+        // Verileri ekrana basan fonksiyon
+        function renderDiagnoses(diagnoses) {
+            const listContainer = document.getElementById('diagnosisList');
+            listContainer.innerHTML = ''; 
+
+            diagnoses.forEach(diag => {
+                const card = document.createElement('div');
+                card.className = 'diagnosis-card';
+                card.innerHTML = `
+                    <div class="diagnosis-header" onclick="toggleCard(this)">
+                        <div>${diag.isim} <span class="category">(${diag.kategori})</span></div>
+                    </div>
+                    <div class="diagnosis-content">${diag.kriterler}</div>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        // Arama fonksiyonu
+        function filterDiagnoses() {
+            const input = document.getElementById('searchBox').value.toLowerCase();
+            const filtered = allDiagnoses.filter(diag => 
+                diag.isim.toLowerCase().includes(input) || 
+                diag.kategori.toLowerCase().includes(input)
+            );
+            renderDiagnoses(filtered);
+        }
+
+        // Akordeon menü
+        function toggleCard(element) {
+            element.parentElement.classList.toggle('active');
+        }
+
+        // Sayfa yüklendiğinde verileri çek
+        window.onload = fetchDiagnoses;
+    </script>
+</body>
+</html>
 
