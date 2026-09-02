@@ -1,0 +1,17 @@
+{
+  "name": "DSM-5 Rehberi",
+  "short_name": "DSM-5",
+  "description": "Klinik Tanı Ölçütleri Portalı",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F2F2F7",
+  "theme_color": "#F2F2F7",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
