@@ -3,99 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DSM-5 Hızlı Başvuru</title>
-    <!-- Supabase JS kütüphanesini dışarıdan çağırıyoruz -->
+    <title>DSM-5 Tanı Ölçütleri</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary-color: #2c3e50; --bg-color: #f8f9fa; --border-color: #dee2e6; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg-color); color: #333; max-width: 900px; margin: 0 auto; padding: 20px; }
-        h1 { color: var(--primary-color); text-align: center; margin-bottom: 20px; }
-        #searchBox { width: 100%; padding: 15px; font-size: 16px; border: 2px solid var(--border-color); border-radius: 8px; margin-bottom: 20px; outline: none; box-sizing: border-box; }
-        #searchBox:focus { border-color: var(--primary-color); }
-        .diagnosis-card { background-color: white; border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 10px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .diagnosis-header { padding: 15px 20px; font-size: 18px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background-color: white; }
-        .diagnosis-header:hover { background-color: #f1f3f5; }
-        .diagnosis-header span.category { font-size: 12px; color: #888; font-weight: normal; margin-left: 10px; }
-        .diagnosis-content { display: none; padding: 20px; border-top: 1px solid var(--border-color); line-height: 1.6; }
-        .diagnosis-card.active .diagnosis-content { display: block; }
-        .loading { text-align: center; font-size: 18px; color: #666; margin-top: 20px; }
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f8f9fa;
+            --border-color: #e9ecef;
+            --text-main: #333333;
+            --text-muted: #6c757d;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px 15px;
+            line-height: 1.6;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { color: var(--primary-color); margin-bottom: 5px; font-size: 24px; }
+        
+        .search-container { position: sticky; top: 10px; z-index: 100; margin-bottom: 25px; background-color: var(--bg-color); padding: 10px 0; }
+        .search-box { width: 100%; padding: 16px 20px; font-size: 16px; border: 2px solid #dee2e6; border-radius: 12px; box-sizing: border-box; transition: all 0.3s ease; }
+        .search-box:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15); }
+        
+        .accordion-item { background: #ffffff; border-radius: 10px; margin-bottom: 15px; border: 1px solid var(--border-color); overflow: hidden; }
+        .accordion-header { padding: 18px 20px; font-weight: 600; font-size: 17px; color: var(--primary-color); cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+        .accordion-header:hover { background-color: #f1f3f5; }
+        .accordion-content { display: none; padding: 0 20px 20px 20px; border-top: 1px solid var(--border-color); }
+        .accordion-item.active .accordion-content { display: block; }
+        
+        .tani-card { background: #ffffff; padding: 20px 0; border-bottom: 1px solid var(--border-color); }
+        .tani-card:last-child { border-bottom: none; padding-bottom: 0; }
+        .tani-baslik { font-size: 18px; color: var(--primary-color); margin: 0 0 10px 0; }
+        .kod-badge { background-color: #e3f2fd; color: #1976d2; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 500; display: inline-block; margin-bottom: 15px; }
+        .kriter-harf { font-weight: 700; color: var(--accent-color); margin-right: 5px; }
+        .kriter-tanim { font-weight: 600; margin-bottom: 8px; }
+        ul.kriter-liste { margin-top: 5px; padding-left: 20px; color: #495057; }
+        .hidden { display: none !important; }
+        .loading { text-align: center; padding: 40px; color: var(--text-muted); font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <h1>DSM-5 Hızlı Başvuru</h1>
-    
-    <input type="text" id="searchBox" placeholder="Tanı ara (Örn: Şizofreni)..." onkeyup="filterDiagnoses()">
-    <div id="loadingMessage" class="loading">Veriler Supabase'den yükleniyor...</div>
-    <div id="diagnosisList"></div>
+<div class="container">
+    <header>
+        <h1>DSM-5 Başvuru Rehberi</h1>
+    </header>
 
-    <script>
-        // Supabase Bağlantı Bilgilerin
-        const supabaseUrl = 'https://gmovzycewcwvbzrltdgl.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdtb3Z6eWNld2N3dmJ6cmx0ZGdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxMjA5ODUsImV4cCI6MjEwMzY5Njk4NX0.6c2PZf7gevBbMcSE7kqfBmqd2x4Z_4-HRgJYAldb_K8';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    <div class="search-container">
+        <input type="text" id="searchInput" class="search-box" autocomplete="off" placeholder="Tanı adı, F kodu veya belirti ara...">
+    </div>
 
-        let allDiagnoses = [];
+    <div id="dsmContainer">
+        <div class="loading">Veriler Supabase'den yükleniyor...</div>
+    </div>
+</div>
 
-        // Supabase'den verileri çeken asenkron fonksiyon
-        async function fetchDiagnoses() {
+<script>
+    // Supabase Bağlantı Bilgileri
+    const SUPABASE_URL = 'https://hxahdcetnqcwzhkhqoey.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh4YWhkY2V0bnFjd3poa2hxb2V5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNzUxNzYsImV4cCI6MjEwMzg1MTE3Nn0.6XcAk3fvN9h1nwyj2YLNSarpr9YZEGcRhwkgQRZty5A';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        fetchDSMData();
+        setupSearch();
+    });
+
+    // Supabase'den Veri Çekme
+    async function fetchDSMData() {
+        try {
             const { data, error } = await supabase
-                .from('dsm_diagnoses')
-                .select('*');
+                .from('dsm_kategoriler')
+                .select('*')
+                .order('id', { ascending: true });
 
-            if (error) {
-                console.error('Veri çekme hatası:', error);
-                document.getElementById('loadingMessage').innerText = "Veriler yüklenirken hata oluştu!";
-                return;
-            }
-
-            allDiagnoses = data;
+            if (error) throw error;
             
-            if(allDiagnoses.length === 0) {
-                 document.getElementById('loadingMessage').innerText = "Veritabanına henüz tanı eklenmemiş. Lütfen SQL ile tanıları ekleyin.";
-                 return;
+            if (data && data.length > 0) {
+                renderUI(data);
+            } else {
+                document.getElementById('dsmContainer').innerHTML = '<div class="loading">Henüz veri eklenmemiş. Lütfen Supabase üzerinden verileri girin.</div>';
+            }
+        } catch (error) {
+            console.error('Veri çekme hatası:', error.message);
+            document.getElementById('dsmContainer').innerHTML = `<div class="loading" style="color: red;">Veri yüklenirken hata oluştu: ${error.message}</div>`;
+        }
+    }
+
+    // Arayüzü Çizme Fonksiyonu
+    function renderUI(data) {
+        const container = document.getElementById('dsmContainer');
+        container.innerHTML = '';
+
+        data.forEach(kategori => {
+            const accItem = document.createElement('div');
+            accItem.className = 'accordion-item';
+
+            let tanilarHTML = '';
+            
+            if(kategori.tanilar && Array.isArray(kategori.tanilar)) {
+                kategori.tanilar.forEach(tani => {
+                    let kriterlerHTML = tani.kriterler.map(k => `
+                        <div style="margin-bottom: 12px;">
+                            <div class="kriter-tanim"><span class="kriter-harf">${k.harf}.</span> ${k.tanim}</div>
+                            ${k.maddeler && k.maddeler.length > 0 ? `<ul class="kriter-liste">${k.maddeler.map(m => `<li>${m}</li>`).join('')}</ul>` : ''}
+                        </div>
+                    `).join('');
+
+                    tanilarHTML += `
+                        <div class="tani-card" data-search="${tani.baslik.toLowerCase()} ${tani.kod_icd10.toLowerCase()}">
+                            <h3 class="tani-baslik">${tani.baslik}</h3>
+                            <div class="kod-badge">ICD-10: ${tani.kod_icd10}</div>
+                            <div class="kriter-icerik">${kriterlerHTML}</div>
+                        </div>
+                    `;
+                });
             }
 
-            document.getElementById('loadingMessage').style.display = 'none';
-            renderDiagnoses(allDiagnoses);
-        }
+            accItem.innerHTML = `
+                <div class="accordion-header">
+                    <span>${kategori.kategori_adi}</span>
+                    <span class="accordion-icon">+</span>
+                </div>
+                <div class="accordion-content">
+                    ${tanilarHTML}
+                </div>
+            `;
+            container.appendChild(accItem);
+        });
 
-        // Verileri ekrana basan fonksiyon
-        function renderDiagnoses(diagnoses) {
-            const listContainer = document.getElementById('diagnosisList');
-            listContainer.innerHTML = ''; 
-
-            diagnoses.forEach(diag => {
-                const card = document.createElement('div');
-                card.className = 'diagnosis-card';
-                card.innerHTML = `
-                    <div class="diagnosis-header" onclick="toggleCard(this)">
-                        <div>${diag.isim} <span class="category">(${diag.kategori})</span></div>
-                    </div>
-                    <div class="diagnosis-content">${diag.kriterler}</div>
-                `;
-                listContainer.appendChild(card);
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const item = this.parentElement;
+                item.classList.toggle('active');
+                const icon = this.querySelector('.accordion-icon');
+                icon.textContent = item.classList.contains('active') ? '×' : '+';
+                icon.style.transform = item.classList.contains('active') ? 'rotate(90deg)' : 'rotate(0)';
             });
-        }
+        });
+    }
 
-        // Arama fonksiyonu
-        function filterDiagnoses() {
-            const input = document.getElementById('searchBox').value.toLowerCase();
-            const filtered = allDiagnoses.filter(diag => 
-                diag.isim.toLowerCase().includes(input) || 
-                diag.kategori.toLowerCase().includes(input)
-            );
-            renderDiagnoses(filtered);
-        }
+    // Arama Mantığı
+    function setupSearch() {
+        const searchInput = document.getElementById('searchInput');
+        
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            const accordions = document.querySelectorAll('.accordion-item');
 
-        // Akordeon menü
-        function toggleCard(element) {
-            element.parentElement.classList.toggle('active');
-        }
+            accordions.forEach(acc => {
+                const tanilar = acc.querySelectorAll('.tani-card');
+                let hasVisibleCard = false;
 
-        // Sayfa yüklendiğinde verileri çek
-        window.onload = fetchDiagnoses;
-    </script>
+                tanilar.forEach(card => {
+                    const searchableText = card.getAttribute('data-search') + " " + card.innerText.toLowerCase();
+                    if (searchableText.includes(query)) {
+                        card.classList.remove('hidden');
+                        hasVisibleCard = true;
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+
+                if (hasVisibleCard) {
+                    acc.classList.remove('hidden');
+                    if (query.length > 0) {
+                        acc.classList.add('active');
+                        acc.querySelector('.accordion-icon').textContent = '×';
+                        acc.querySelector('.accordion-icon').style.transform = 'rotate(90deg)';
+                    }
+                } else {
+                    acc.classList.add('hidden');
+                    acc.classList.remove('active');
+                }
+            });
+
+            if (query === '') {
+                accordions.forEach(acc => {
+                    acc.classList.remove('hidden', 'active');
+                    acc.querySelector('.accordion-icon').textContent = '+';
+                    acc.querySelector('.accordion-icon').style.transform = 'rotate(0)';
+                    acc.querySelectorAll('.tani-card').forEach(c => c.classList.remove('hidden'));
+                });
+            }
+        });
+    }
+</script>
 </body>
 </html>
-
