@@ -59,10 +59,11 @@
 </div>
 
 <script>
-    // URL VE ANON KEY BURADA EKSİKSİZ OLMALI
     const SUPABASE_URL = 'https://hxahdcetnqcwzhkhqoey.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh4YWhkY2V0bnFjd3poa2hxb2V5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNzUxNzYsImV4cCI6MjEwMzg1MTE3Nn0.6XcAk3fvN9h1nwyj2YLNSarpr9YZEGcRhwkgQRZty5A';
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+    // Değişken adı çakışmasını önlemek için supabaseClient kullanılıyor
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     document.addEventListener("DOMContentLoaded", () => {
         fetchDSMData();
@@ -71,7 +72,7 @@
 
     async function fetchDSMData() {
         try {
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from('dsm_kategoriler')
                 .select('*')
                 .order('id', { ascending: true });
@@ -85,7 +86,7 @@
             }
         } catch (error) {
             console.error('Veri çekme hatası:', error.message);
-            document.getElementById('dsmContainer').innerHTML = `<div class="error-msg">Bağlantı Hatası: ${error.message} <br> Lütfen konsolu (F12) kontrol edin.</div>`;
+            document.getElementById('dsmContainer').innerHTML = `<div class="error-msg">Bağlantı Hatası: ${error.message}</div>`;
         }
     }
 
@@ -94,7 +95,6 @@
         container.innerHTML = '';
 
         data.forEach(kategori => {
-            // Başlangıçta tüm kategoriler 'active' olarak oluşturuluyor
             const accItem = document.createElement('div');
             accItem.className = 'accordion-item active'; 
 
@@ -119,7 +119,6 @@
                 });
             }
 
-            // Başlangıçta açık olduğu için ikon çarpı veya yan dönmüş halde
             accItem.innerHTML = `
                 <div class="accordion-header">
                     <span>${kategori.kategori_adi}</span>
@@ -166,7 +165,7 @@
 
                 if (hasVisibleCard) {
                     acc.classList.remove('hidden');
-                    acc.classList.add('active'); // Filtreleme eşleştiyse açık tut
+                    acc.classList.add('active'); 
                     acc.querySelector('.accordion-icon').textContent = '×';
                     acc.querySelector('.accordion-icon').style.transform = 'rotate(90deg)';
                 } else {
@@ -175,7 +174,6 @@
                 }
             });
 
-            // Arama çubuğu silinip boşaltıldığında her şeyi tekrar varsayılan (AÇIK) hale getir
             if (query === '') {
                 accordions.forEach(acc => {
                     acc.classList.remove('hidden');
