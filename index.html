@@ -7,11 +7,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --bg-color: #F2F2F7; /* Yumuşak arka plan */
+            --bg-color: #F2F2F7; 
             --card-bg: #FFFFFF;
             --text-main: #1C1C1E;
             --text-muted: #8E8E93;
-            --accent-color: #007AFF; /* Modern Mavi Vurgu */
+            --accent-color: #007AFF; 
             --accent-hover: #0056b3;
             --border-color: #E5E5EA;
             --badge-bg: #E5F1FF;
@@ -53,7 +53,6 @@
         }
         .search-box::placeholder { color: #A1A1A6; }
         
-        /* Ana Kategori Akordeon */
         .accordion-item { 
             background: var(--card-bg); 
             border-radius: 16px; 
@@ -80,7 +79,6 @@
         .accordion-item.active .accordion-content { display: block; }
         .accordion-item.active .accordion-header { border-bottom: 1px solid var(--border-color); margin-bottom: 15px; }
         
-        /* Alt Tanı Akordeon (İç İçe) */
         .tani-card { 
             background: #FAFAFC; 
             border: 1px solid var(--border-color); 
@@ -137,7 +135,8 @@
     </header>
 
     <div class="search-container">
-        <input type="text" id="searchInput" class="search-box" autocomplete="off" placeholder="Tanı adı, F kodu veya belirti arayın...">
+        <!-- Placeholder metni de sadece tanı adı ve koda göre daraltıldı -->
+        <input type="text" id="searchInput" class="search-box" autocomplete="off" placeholder="Tanı adı veya F kodu arayın...">
     </div>
 
     <div id="dsmContainer">
@@ -224,7 +223,6 @@
             container.appendChild(accItem);
         });
 
-        // Ana Kategori Tıklama Olayı
         document.querySelectorAll('.accordion-header').forEach(header => {
             header.addEventListener('click', function() {
                 const item = this.parentElement;
@@ -235,7 +233,6 @@
             });
         });
 
-        // Alt Tanı Tıklama Olayı (İç Akordeon)
         document.querySelectorAll('.tani-header').forEach(header => {
             header.addEventListener('click', function(e) {
                 e.stopPropagation(); 
@@ -260,7 +257,8 @@
                 let hasVisibleCard = false;
 
                 tanilar.forEach(card => {
-                    const searchableText = card.getAttribute('data-search') + " " + card.innerText.toLowerCase();
+                    // YALNIZCA BAŞLIK VE ICD-10 KODUNU ARAMA (İçerik metni hariç tutuldu)
+                    const searchableText = card.getAttribute('data-search');
                     
                     if (query === '') {
                         card.classList.remove('hidden');
