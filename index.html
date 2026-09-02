@@ -7,53 +7,137 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            /* Elegance Gri Renk Paleti */
-            --primary-color: #2c3034;   /* Koyu Başlık Grisi */
-            --accent-color: #5b656f;    /* Vurgu (Çelik Grisi) */
-            --bg-color: #f4f5f7;        /* Arka Plan (Açık Soğuk Gri) */
-            --border-color: #d1d5db;    /* İnce Sınır Çizgileri */
-            --text-main: #374151;       /* Ana Metin Grisi */
-            --text-muted: #6b7280;
-            --badge-bg: #e5e7eb;        /* Kod Rozeti Arka Plan */
-            --badge-text: #4b5563;      /* Kod Rozeti Yazı Rengi */
+            --bg-color: #F2F2F7; /* Yumuşak arka plan */
+            --card-bg: #FFFFFF;
+            --text-main: #1C1C1E;
+            --text-muted: #8E8E93;
+            --accent-color: #007AFF; /* Modern Mavi Vurgu */
+            --accent-hover: #0056b3;
+            --border-color: #E5E5EA;
+            --badge-bg: #E5F1FF;
+            --badge-text: #007AFF;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 20px 15px; line-height: 1.6; }
-        .container { max-width: 800px; margin: 0 auto; }
-        header { text-align: center; margin-bottom: 30px; }
-        h1 { color: var(--primary-color); margin-bottom: 5px; font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
         
-        .search-container { position: sticky; top: 10px; z-index: 100; margin-bottom: 25px; background-color: var(--bg-color); padding: 10px 0; }
-        .search-box { width: 100%; padding: 16px 20px; font-size: 16px; border: 1px solid var(--border-color); border-radius: 12px; box-sizing: border-box; transition: all 0.3s ease; background-color: #ffffff; color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
-        .search-box:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 4px 12px rgba(91, 101, 111, 0.15); }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 40px 15px; 
+            line-height: 1.5; 
+            -webkit-font-smoothing: antialiased;
+        }
         
-        .accordion-item { background: #ffffff; border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
-        .accordion-header { padding: 18px 20px; font-weight: 600; font-size: 17px; color: var(--primary-color); cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; transition: background-color 0.2s ease; }
-        .accordion-header:hover { background-color: #f9fafb; }
-        .accordion-icon { font-size: 22px; color: var(--accent-color); transition: transform 0.3s ease; font-weight: 300; }
-        .accordion-content { display: none; padding: 0 20px 20px 20px; border-top: 1px solid var(--border-color); background-color: #fcfcfd; }
+        .container { max-width: 760px; margin: 0 auto; }
+        
+        header { text-align: center; margin-bottom: 35px; }
+        h1 { color: var(--text-main); margin-bottom: 8px; font-size: 28px; font-weight: 700; letter-spacing: -0.8px; }
+        .subtitle { color: var(--text-muted); font-size: 15px; font-weight: 400; }
+        
+        .search-container { position: sticky; top: 15px; z-index: 100; margin-bottom: 30px; }
+        .search-box { 
+            width: 100%; 
+            padding: 16px 24px; 
+            font-size: 16px; 
+            border: none; 
+            border-radius: 20px; 
+            box-sizing: border-box; 
+            background-color: var(--card-bg); 
+            color: var(--text-main); 
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease; 
+        }
+        .search-box:focus { 
+            outline: none; 
+            box-shadow: 0 4px 24px rgba(0, 122, 255, 0.15); 
+        }
+        .search-box::placeholder { color: #A1A1A6; }
+        
+        /* Ana Kategori Akordeon */
+        .accordion-item { 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            margin-bottom: 16px; 
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02); 
+            overflow: hidden; 
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+        .accordion-header { 
+            padding: 20px 24px; 
+            font-weight: 600; 
+            font-size: 17px; 
+            color: var(--text-main); 
+            cursor: pointer; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            user-select: none; 
+            transition: background-color 0.2s ease; 
+        }
+        .accordion-header:hover { background-color: #FAFAFC; }
+        .accordion-icon { font-size: 24px; color: var(--accent-color); transition: transform 0.3s ease; font-weight: 400; }
+        .accordion-content { display: none; padding: 0 24px 24px 24px; }
         .accordion-item.active .accordion-content { display: block; }
+        .accordion-item.active .accordion-header { border-bottom: 1px solid var(--border-color); margin-bottom: 15px; }
         
-        .tani-card { background: #ffffff; padding: 20px; border: 1px solid var(--border-color); border-radius: 8px; margin-top: 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-        .tani-baslik { font-size: 18px; color: var(--primary-color); margin: 0 0 10px 0; }
-        .kod-badge { background-color: var(--badge-bg); color: var(--badge-text); border: 1px solid #d1d5db; padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; display: inline-block; margin-bottom: 15px; }
-        .kriter-harf { font-weight: 700; color: var(--accent-color); margin-right: 5px; }
-        .kriter-tanim { font-weight: 600; margin-bottom: 8px; color: var(--primary-color); }
-        ul.kriter-liste { margin-top: 5px; padding-left: 20px; color: var(--text-main); }
+        /* Alt Tanı Akordeon (İç İçe) */
+        .tani-card { 
+            background: #FAFAFC; 
+            border: 1px solid var(--border-color); 
+            border-radius: 12px; 
+            margin-bottom: 12px; 
+            overflow: hidden; 
+            transition: all 0.2s ease;
+        }
+        .tani-card:last-child { margin-bottom: 0; }
+        
+        .tani-header { 
+            padding: 16px 20px; 
+            cursor: pointer; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; 
+            user-select: none; 
+        }
+        .tani-header:hover { background-color: #F2F2F7; }
+        .tani-baslik-container { display: flex; flex-direction: column; gap: 8px; }
+        .tani-baslik { font-size: 16px; color: var(--text-main); margin: 0; font-weight: 600; letter-spacing: -0.3px; }
+        .kod-badge { 
+            background-color: var(--badge-bg); 
+            color: var(--badge-text); 
+            padding: 4px 10px; 
+            border-radius: 8px; 
+            font-size: 13px; 
+            font-weight: 600; 
+            align-self: flex-start; 
+        }
+        .tani-icon { font-size: 20px; color: var(--text-muted); transition: transform 0.3s ease; margin-top: 2px; }
+        
+        .tani-content { display: none; padding: 0 20px 20px 20px; }
+        .tani-card.active { background: var(--card-bg); border-color: #D1D1D6; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        .tani-card.active .tani-content { display: block; }
+        .tani-card.active .tani-icon { color: var(--accent-color); }
+        
+        .kriter-harf { font-weight: 700; color: var(--accent-color); margin-right: 6px; }
+        .kriter-tanim { font-weight: 500; margin-bottom: 6px; margin-top: 14px; color: var(--text-main); }
+        ul.kriter-liste { margin-top: 6px; padding-left: 22px; color: #48484A; font-size: 15px; }
         ul.kriter-liste li { margin-bottom: 6px; }
+        
         .hidden { display: none !important; }
-        .loading { text-align: center; padding: 40px; color: var(--text-muted); font-weight: bold; }
-        .error-msg { color: #b91c1c; text-align: center; padding: 20px; font-weight: bold; background: #fee2e2; border-radius: 8px; border: 1px solid #f87171; }
+        .loading { text-align: center; padding: 50px; color: var(--text-muted); font-size: 15px; font-weight: 500; }
+        .error-msg { color: #FF3B30; text-align: center; padding: 20px; font-weight: 500; background: #FFE5E5; border-radius: 12px; font-size: 15px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>DSM-5 Başvuru Rehberi</h1>
+        <h1>DSM-5 Rehberi</h1>
+        <div class="subtitle">Klinik Tanı Ölçütleri Portalı</div>
     </header>
 
     <div class="search-container">
-        <input type="text" id="searchInput" class="search-box" autocomplete="off" placeholder="Tanı adı, F kodu veya belirti ara...">
+        <input type="text" id="searchInput" class="search-box" autocomplete="off" placeholder="Tanı adı, F kodu veya belirti arayın...">
     </div>
 
     <div id="dsmContainer">
@@ -98,7 +182,6 @@
 
         data.forEach(kategori => {
             const accItem = document.createElement('div');
-            // Başlangıçta "active" class'ı YOK, akordeonlar kapalı gelecek
             accItem.className = 'accordion-item'; 
 
             let tanilarHTML = '';
@@ -106,7 +189,7 @@
             if(kategori.tanilar && Array.isArray(kategori.tanilar)) {
                 kategori.tanilar.forEach(tani => {
                     let kriterlerHTML = tani.kriterler.map(k => `
-                        <div style="margin-bottom: 12px;">
+                        <div>
                             <div class="kriter-tanim"><span class="kriter-harf">${k.harf}.</span> ${k.tanim}</div>
                             ${k.maddeler && k.maddeler.length > 0 ? `<ul class="kriter-liste">${k.maddeler.map(m => `<li>${m}</li>`).join('')}</ul>` : ''}
                         </div>
@@ -114,15 +197,21 @@
 
                     tanilarHTML += `
                         <div class="tani-card" data-search="${tani.baslik.toLowerCase()} ${tani.kod_icd10.toLowerCase()}">
-                            <h3 class="tani-baslik">${tani.baslik}</h3>
-                            <div class="kod-badge">ICD-10: ${tani.kod_icd10}</div>
-                            <div class="kriter-icerik">${kriterlerHTML}</div>
+                            <div class="tani-header">
+                                <div class="tani-baslik-container">
+                                    <h3 class="tani-baslik">${tani.baslik}</h3>
+                                    <div class="kod-badge">${tani.kod_icd10}</div>
+                                </div>
+                                <span class="tani-icon">+</span>
+                            </div>
+                            <div class="tani-content">
+                                ${kriterlerHTML}
+                            </div>
                         </div>
                     `;
                 });
             }
 
-            // Başlangıç ikonu "+" olarak ayarlandı, rotasyon 0deg
             accItem.innerHTML = `
                 <div class="accordion-header">
                     <span>${kategori.kategori_adi}</span>
@@ -135,13 +224,26 @@
             container.appendChild(accItem);
         });
 
+        // Ana Kategori Tıklama Olayı
         document.querySelectorAll('.accordion-header').forEach(header => {
             header.addEventListener('click', function() {
                 const item = this.parentElement;
                 item.classList.toggle('active');
                 const icon = this.querySelector('.accordion-icon');
-                icon.textContent = item.classList.contains('active') ? '×' : '+';
-                icon.style.transform = item.classList.contains('active') ? 'rotate(90deg)' : 'rotate(0)';
+                icon.textContent = item.classList.contains('active') ? '−' : '+';
+                icon.style.transform = item.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0)';
+            });
+        });
+
+        // Alt Tanı Tıklama Olayı (İç Akordeon)
+        document.querySelectorAll('.tani-header').forEach(header => {
+            header.addEventListener('click', function(e) {
+                e.stopPropagation(); 
+                const card = this.parentElement;
+                card.classList.toggle('active');
+                const icon = this.querySelector('.tani-icon');
+                icon.textContent = card.classList.contains('active') ? '−' : '+';
+                icon.style.transform = card.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0)';
             });
         });
     }
@@ -159,35 +261,41 @@
 
                 tanilar.forEach(card => {
                     const searchableText = card.getAttribute('data-search') + " " + card.innerText.toLowerCase();
-                    if (searchableText.includes(query)) {
+                    
+                    if (query === '') {
                         card.classList.remove('hidden');
+                        card.classList.remove('active');
+                        card.querySelector('.tani-icon').textContent = '+';
+                        card.querySelector('.tani-icon').style.transform = 'rotate(0deg)';
+                    } else if (searchableText.includes(query)) {
+                        card.classList.remove('hidden');
+                        card.classList.add('active'); 
+                        card.querySelector('.tani-icon').textContent = '−';
+                        card.querySelector('.tani-icon').style.transform = 'rotate(180deg)';
                         hasVisibleCard = true;
                     } else {
                         card.classList.add('hidden');
+                        card.classList.remove('active');
+                        card.querySelector('.tani-icon').textContent = '+';
+                        card.querySelector('.tani-icon').style.transform = 'rotate(0deg)';
                     }
                 });
 
-                if (hasVisibleCard) {
+                if (query === '') {
+                    acc.classList.remove('hidden');
+                    acc.classList.remove('active');
+                    acc.querySelector('.accordion-icon').textContent = '+';
+                    acc.querySelector('.accordion-icon').style.transform = 'rotate(0deg)';
+                } else if (hasVisibleCard) {
                     acc.classList.remove('hidden');
                     acc.classList.add('active'); 
-                    acc.querySelector('.accordion-icon').textContent = '×';
-                    acc.querySelector('.accordion-icon').style.transform = 'rotate(90deg)';
+                    acc.querySelector('.accordion-icon').textContent = '−';
+                    acc.querySelector('.accordion-icon').style.transform = 'rotate(180deg)';
                 } else {
                     acc.classList.add('hidden');
                     acc.classList.remove('active');
                 }
             });
-
-            if (query === '') {
-                accordions.forEach(acc => {
-                    acc.classList.remove('hidden');
-                    // Arama temizlenince hepsi tekrar KAPALI duruma döner
-                    acc.classList.remove('active');
-                    acc.querySelector('.accordion-icon').textContent = '+';
-                    acc.querySelector('.accordion-icon').style.transform = 'rotate(0deg)';
-                    acc.querySelectorAll('.tani-card').forEach(c => c.classList.remove('hidden'));
-                });
-            }
         });
     }
 </script>
