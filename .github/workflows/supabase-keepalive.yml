@@ -1,0 +1,14 @@
+name: Supabase Keep-Alive
+on:
+  schedule:
+    - cron: '0 8 */3 * *' # Her 3 günde bir sabah 08:00'de çalışır
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase API
+        run: |
+          curl -X GET "https://hxahdcetnqcwzhkhqoey.supabase.co/rest/v1/dsm_kategoriler?select=id&limit=1" \
+          -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh4YWhkY2V0bnFjd3poa2hxb2V5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyNzUxNzYsImV4cCI6MjEwMzg1MTE3Nn0.6XcAk3fvN9h1nwyj2YLNSarpr9YZEGcRhwkgQRZty5A"
