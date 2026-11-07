@@ -3,91 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#F2F4F8" id="themeColorMeta">
+    <meta name="theme-color" content="#F2F5FA" id="themeColorMeta">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="DSM-5">
+    <meta name="application-name" content="DSM-5 Klinik">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="DSM-5">
+    <meta name="apple-mobile-web-app-title" content="DSM-5 Klinik">
     <link rel="apple-touch-icon" href="logo.png">
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="manifest" href="manifest.json">
     <title>DSM-5 Klinik Karar Destek Sistemi</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <style>
         :root {
-            --bg-color: #F2F4F8;
+            --bg-color: #F2F5FA;
+            --bg-gradient: radial-gradient(circle at 50% 0%, #E0F2FE 0%, rgba(242, 245, 250, 0) 65%);
             --card-bg: #FFFFFF;
             --card-sub-bg: #F8FAFC;
+            --card-hover: #F1F5F9;
+            --glass-bg: rgba(255, 255, 255, 0.86);
             --text-main: #0F172A;
             --text-secondary: #334155;
             --text-muted: #64748B;
             --accent-color: #0284C7;
+            --accent-hover: #0369A1;
             --accent-soft: #E0F2FE;
+            --accent-border: rgba(2, 132, 199, 0.25);
             --border-color: #E2E8F0;
-            --search-bg: rgba(255, 255, 255, 0.85);
-            --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
-            --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.07);
-            
+            --shadow-sm: 0 2px 10px rgba(15, 23, 42, 0.04);
+            --shadow-md: 0 10px 30px rgba(15, 23, 42, 0.07);
+            --shadow-lg: 0 20px 40px rgba(15, 23, 42, 0.10);
+
             /* Tedavi Algoritması Renkleri (Açık Tema) */
             --green-bg: #F0FDF4;
             --green-border: #22C55E;
             --green-text: #15803D;
-            
+            --green-badge: #DCFCE7;
+
             --yellow-bg: #FEFCE8;
             --yellow-border: #EAB308;
             --yellow-text: #A16207;
-            
+            --yellow-badge: #FEF9C3;
+
             --red-bg: #FEF2F2;
             --red-border: #EF4444;
             --red-text: #B91C1C;
+            --red-badge: #FEE2E2;
         }
 
         [data-theme="dark"] {
-            --bg-color: #0B0F19;
-            --card-bg: #151C2C;
-            --card-sub-bg: #1E293B;
+            --bg-color: #090D16;
+            --bg-gradient: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.12) 0%, rgba(9, 13, 22, 0) 65%);
+            --card-bg: #131B2E;
+            --card-sub-bg: #1A243B;
+            --card-hover: #212E4A;
+            --glass-bg: rgba(19, 27, 46, 0.86);
             --text-main: #F8FAFC;
             --text-secondary: #CBD5E1;
             --text-muted: #94A3B8;
             --accent-color: #38BDF8;
-            --accent-soft: rgba(56, 189, 248, 0.15);
-            --border-color: #26334D;
-            --search-bg: rgba(21, 28, 44, 0.85);
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
-            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --accent-hover: #7DD3FC;
+            --accent-soft: rgba(56, 189, 248, 0.14);
+            --accent-border: rgba(56, 189, 248, 0.3);
+            --border-color: #23304C;
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.45);
+            --shadow-lg: 0 20px 45px rgba(0, 0, 0, 0.6);
 
             /* Tedavi Algoritması Renkleri (Koyu Tema) */
-            --green-bg: rgba(34, 197, 94, 0.1);
+            --green-bg: rgba(34, 197, 94, 0.08);
             --green-border: #22C55E;
             --green-text: #4ADE80;
-            
-            --yellow-bg: rgba(234, 179, 8, 0.1);
+            --green-badge: rgba(34, 197, 94, 0.18);
+
+            --yellow-bg: rgba(234, 179, 8, 0.08);
             --yellow-border: #EAB308;
             --yellow-text: #FACC15;
-            
-            --red-bg: rgba(239, 68, 68, 0.1);
+            --yellow-badge: rgba(234, 179, 8, 0.18);
+
+            --red-bg: rgba(239, 68, 68, 0.09);
             --red-border: #EF4444;
             --red-text: #F87171;
+            --red-badge: rgba(239, 68, 68, 0.18);
         }
-        
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-        
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI", Roboto, Helvetica, sans-serif;
             background-color: var(--bg-color);
+            background-image: var(--bg-gradient);
+            background-attachment: fixed;
             color: var(--text-main);
             margin: 0;
-            padding: 24px 16px 60px 16px;
+            padding: 20px 16px 70px 16px;
             line-height: 1.55;
             -webkit-font-smoothing: antialiased;
             transition: background-color 0.25s ease, color 0.25s ease;
         }
 
-        .container { max-width: 800px; margin: 0 auto; }
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+        }
 
-        /* Üst Bar & Başlık */
+        /* Üst Bar & Durum Göstergesi */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -98,10 +121,10 @@
         .status-pill {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 5px 11px;
+            gap: 8px;
+            padding: 6px 13px;
             border-radius: 999px;
-            font-size: 12px;
+            font-size: 12.5px;
             font-weight: 600;
             background: var(--card-bg);
             color: var(--text-muted);
@@ -114,62 +137,88 @@
             height: 8px;
             border-radius: 50%;
             background-color: #94A3B8;
+            transition: all 0.3s ease;
         }
-        .status-dot.online { background-color: #22C55E; box-shadow: 0 0 8px rgba(34, 197, 94, 0.6); }
-        .status-dot.offline { background-color: #F59E0B; box-shadow: 0 0 8px rgba(245, 158, 11, 0.6); }
+        .status-dot.online {
+            background-color: #22C55E;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.65);
+        }
+        .status-dot.offline {
+            background-color: #F59E0B;
+            box-shadow: 0 0 8px rgba(245, 158, 11, 0.65);
+        }
 
-        .top-actions { display: flex; gap: 8px; }
+        .top-actions {
+            display: flex;
+            gap: 8px;
+        }
 
         .icon-btn {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             color: var(--text-main);
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             box-shadow: var(--shadow-sm);
-            transition: transform 0.15s ease, background-color 0.2s;
+            transition: transform 0.15s ease, background-color 0.2s, border-color 0.2s;
         }
-        .icon-btn:active { transform: scale(0.93); }
+        .icon-btn:hover {
+            border-color: var(--accent-color);
+            background: var(--card-sub-bg);
+        }
+        .icon-btn:active {
+            transform: scale(0.93);
+        }
 
-        header { text-align: center; margin-bottom: 24px; }
-        
+        /* Hero Başlık Alanı */
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
         .brand-badge {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             background: var(--accent-soft);
             color: var(--accent-color);
-            font-size: 12px;
+            border: 1px solid var(--accent-border);
+            font-size: 11.5px;
             font-weight: 700;
-            padding: 4px 12px;
+            padding: 4px 13px;
             border-radius: 999px;
-            letter-spacing: 0.4px;
-            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
             text-transform: uppercase;
         }
 
         h1 {
             margin: 0 0 6px 0;
-            font-size: 30px;
-            font-weight: 800;
-            letter-spacing: -0.8px;
+            font-size: 32px;
+            font-weight: 850;
+            letter-spacing: -0.9px;
+            background: linear-gradient(135deg, var(--text-main) 20%, var(--accent-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        
+
         .subtitle {
             color: var(--text-muted);
             font-size: 14.5px;
             font-weight: 500;
         }
 
-        /* Arama ve Filtre Alanı */
+        /* Yapışkan Arama Çubuğu */
         .search-container {
             position: sticky;
             top: 12px;
-            z-index: 100;
-            margin-bottom: 20px;
+            z-index: 90;
+            margin-bottom: 18px;
         }
 
         .search-wrapper {
@@ -181,41 +230,44 @@
         .search-icon {
             position: absolute;
             left: 18px;
-            color: var(--text-muted);
+            color: var(--accent-color);
             pointer-events: none;
         }
 
         .search-box {
             width: 100%;
             padding: 16px 46px 16px 48px;
-            font-size: 16px;
+            font-size: 15.5px;
             font-weight: 500;
             color: var(--text-main);
-            border: 1px solid var(--border-color);
+            border: 1.5px solid var(--border-color);
             border-radius: 18px;
-            background-color: var(--search-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             box-shadow: var(--shadow-md);
             transition: all 0.2s ease;
             appearance: none;
         }
-        
-        .search-box::placeholder { color: var(--text-muted); font-weight: 400; }
+
+        .search-box::placeholder {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
         .search-box:focus {
             outline: none;
             border-color: var(--accent-color);
-            box-shadow: 0 8px 28px rgba(2, 132, 199, 0.18);
+            box-shadow: 0 10px 30px rgba(2, 132, 199, 0.2);
         }
 
         .clear-btn {
             position: absolute;
             right: 14px;
             background: var(--border-color);
-            color: var(--text-muted);
+            color: var(--text-main);
             border: none;
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             font-size: 13px;
             font-weight: 700;
@@ -224,57 +276,77 @@
             align-items: center;
             justify-content: center;
             padding: 0;
+            transition: background-color 0.15s;
+        }
+        .clear-btn:hover {
+            background: var(--accent-color);
+            color: #fff;
         }
 
+        /* Araç Çubuğu */
         .toolbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 14px;
-            padding: 0 4px;
+            padding: 0 6px;
             font-size: 13px;
             color: var(--text-muted);
-            font-weight: 500;
+            font-weight: 600;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 6px;
         }
 
         .text-btn {
-            background: none;
-            border: none;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             color: var(--accent-color);
             font-weight: 600;
-            font-size: 13px;
+            font-size: 12.5px;
             cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 6px;
+            padding: 5px 11px;
+            border-radius: 9px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.15s ease;
         }
-        .text-btn:hover { background: var(--accent-soft); }
+        .text-btn:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent-border);
+        }
 
         /* Ana Kategori Akordeonları */
         .accordion-item {
             background: var(--card-bg);
             border-radius: 18px;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             box-shadow: var(--shadow-sm);
             overflow: hidden;
             border: 1px solid var(--border-color);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
         }
-        
+
         .accordion-item.active {
-            border-color: rgba(2, 132, 199, 0.35);
+            border-color: var(--accent-border);
             box-shadow: var(--shadow-md);
         }
 
         .accordion-header {
-            padding: 18px 20px;
+            padding: 17px 20px;
             font-weight: 700;
-            font-size: 16.5px;
+            font-size: 16px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
             user-select: none;
             gap: 12px;
+            transition: background-color 0.15s ease;
+        }
+        .accordion-header:hover {
+            background-color: var(--card-sub-bg);
         }
 
         .kategori-sol {
@@ -283,13 +355,28 @@
             gap: 12px;
         }
 
+        .kategori-no {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 28px;
+            padding: 0 6px;
+            border-radius: 8px;
+            background: var(--accent-soft);
+            color: var(--accent-color);
+            font-size: 12.5px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
         .kategori-sayi {
             background: var(--card-sub-bg);
             color: var(--text-muted);
             border: 1px solid var(--border-color);
             font-size: 12px;
             font-weight: 600;
-            padding: 2px 9px;
+            padding: 3px 10px;
             border-radius: 999px;
             white-space: nowrap;
         }
@@ -304,32 +391,43 @@
 
         .accordion-content {
             display: none;
-            padding: 4px 16px 18px 16px;
+            padding: 6px 14px 16px 14px;
             border-top: 1px solid var(--border-color);
             background: var(--card-bg);
         }
-        
-        .accordion-item.active .accordion-content { display: block; }
-        .accordion-item.active .accordion-header .chevron-icon { transform: rotate(180deg); }
 
-        /* Tanı Kartları */
-        .tani-card {
-            background: var(--card-sub-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            margin-top: 10px;
-            overflow: hidden;
-            transition: all 0.2s ease;
+        .accordion-item.active .accordion-content {
+            display: block;
+        }
+        .accordion-item.active .accordion-header .chevron-icon {
+            transform: rotate(180deg);
         }
 
-        .tani-header {
-            padding: 14px 16px;
+        /* Tanı Satır Kartları (Tıklanınca Detay Sayfasını Açar) */
+        .tani-row-card {
+            background: var(--card-sub-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 13px;
+            margin-top: 8px;
+            padding: 13px 16px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            user-select: none;
             gap: 12px;
+            user-select: none;
+            transition: all 0.18s ease;
+        }
+
+        .tani-row-card:hover {
+            background: var(--card-hover);
+            border-color: var(--accent-color);
+            transform: translateX(3px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tani-row-card:active {
+            transform: scale(0.99);
         }
 
         .tani-baslik-container {
@@ -350,7 +448,8 @@
         .kod-badge {
             background-color: var(--accent-soft);
             color: var(--accent-color);
-            padding: 3px 9px;
+            border: 1px solid var(--accent-border);
+            padding: 2px 9px;
             border-radius: 7px;
             font-size: 12px;
             font-weight: 700;
@@ -358,75 +457,308 @@
         }
 
         .tedavi-var-rozet {
-            background-color: var(--green-bg);
+            background-color: var(--green-badge);
             color: var(--green-text);
             border: 1px solid rgba(34, 197, 94, 0.3);
-            padding: 2px 7px;
+            padding: 2px 8px;
             border-radius: 6px;
             font-size: 11px;
+            font-weight: 650;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .arrow-right-icon {
+            width: 19px;
+            height: 19px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+            transition: transform 0.18s ease, color 0.18s ease;
+        }
+        .tani-row-card:hover .arrow-right-icon {
+            color: var(--accent-color);
+            transform: translateX(3px);
+        }
+
+        /* =========================================================
+           DETAY SAYFASI GÖRÜNÜMÜ (SAYFA İÇİ TEKİL TANI EKRANI)
+           ========================================================= */
+        #detailView {
+            animation: fadeSlideIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .detail-nav-bar {
+            position: sticky;
+            top: 12px;
+            z-index: 95;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            margin-bottom: 18px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-soft);
+            color: var(--accent-color);
+            border: 1px solid var(--accent-border);
+            padding: 9px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.18s ease;
+        }
+        .back-btn:hover {
+            background: var(--accent-color);
+            color: #FFFFFF;
+        }
+        .back-btn:active {
+            transform: scale(0.96);
+        }
+
+        .detail-nav-Switchers {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-step-btn {
+            background: var(--card-sub-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.15s ease;
+        }
+        .nav-step-btn:hover:not(:disabled) {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            background: var(--accent-soft);
+        }
+        .nav-step-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Tanı Hero Kartı */
+        .detail-hero-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 22px;
+            padding: 24px 24px 20px 24px;
+            margin-bottom: 18px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .detail-hero-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), #22C55E);
+        }
+
+        .detail-kategori-etiket {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 8px;
+        }
+
+        .detail-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 0 0 14px 0;
+            letter-spacing: -0.5px;
+            line-height: 1.3;
+        }
+
+        .detail-meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detail-icd-pill {
+            background: var(--accent-soft);
+            color: var(--accent-color);
+            border: 1px solid var(--accent-border);
+            padding: 5px 12px;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 750;
+        }
+
+        .detail-stat-pill {
+            background: var(--card-sub-bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 5px 12px;
+            border-radius: 9px;
+            font-size: 12.5px;
             font-weight: 600;
         }
 
-        .tani-content {
-            display: none;
-            padding: 4px 16px 18px 16px;
-            border-top: 1px solid var(--border-color);
-            background: var(--card-bg);
+        /* Hızlı Sekme (Jump) Barı */
+        .detail-section-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 18px;
         }
 
-        .tani-card.active {
+        .section-tab-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
             background: var(--card-bg);
+            color: var(--text-secondary);
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+        .section-tab-btn.active,
+        .section-tab-btn:hover {
             border-color: var(--accent-color);
+            background: var(--accent-soft);
+            color: var(--accent-color);
+        }
+
+        /* Bölüm Kartları (DSM-5 Kriterleri & Klinik Tedavi) */
+        .detail-section-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 20px;
             box-shadow: var(--shadow-sm);
         }
-        .tani-card.active .tani-content { display: block; }
-        .tani-card.active .tani-header .chevron-icon { transform: rotate(180deg); color: var(--accent-color); }
 
-        /* Tanı Kriterleri */
-        .kriter-satir {
-            margin-top: 14px;
+        .section-header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 17.5px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin: 0 0 16px 0;
             padding-bottom: 12px;
             border-bottom: 1px solid var(--border-color);
         }
-        .kriter-satir:last-of-type { border-bottom: none; padding-bottom: 4px; }
+
+        .section-icon-box {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: var(--accent-soft);
+            color: var(--accent-color);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            flex-shrink: 0;
+        }
+
+        /* Tanı Kriterleri Satırları */
+        .kriter-satir {
+            margin-top: 14px;
+            padding: 14px 16px;
+            background: var(--card-sub-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+        }
+        .kriter-satir:first-of-type {
+            margin-top: 0;
+        }
 
         .kriter-tanim {
-            font-weight: 500;
-            font-size: 14.5px;
+            font-weight: 600;
+            font-size: 15px;
             color: var(--text-main);
             display: flex;
             align-items: flex-start;
-            gap: 10px;
+            gap: 12px;
         }
 
         .kriter-harf {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 26px;
-            height: 26px;
-            padding: 0 6px;
-            background: var(--accent-soft);
-            color: var(--accent-color);
+            min-width: 30px;
+            height: 30px;
+            padding: 0 8px;
+            background: var(--accent-color);
+            color: #FFFFFF;
             font-weight: 800;
-            font-size: 13px;
-            border-radius: 7px;
+            font-size: 13.5px;
+            border-radius: 8px;
             flex-shrink: 0;
             margin-top: 1px;
+            box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
         }
 
         ul.kriter-liste {
-            margin: 8px 0 0 36px;
+            margin: 12px 0 0 42px;
             padding: 0;
             list-style: none;
             color: var(--text-secondary);
-            font-size: 14px;
+            font-size: 14.3px;
         }
 
         ul.kriter-liste li {
             position: relative;
-            padding-left: 14px;
-            margin-bottom: 6px;
+            padding-left: 16px;
+            margin-bottom: 8px;
+            line-height: 1.55;
+        }
+        ul.kriter-liste li:last-child {
+            margin-bottom: 0;
         }
 
         ul.kriter-liste li::before {
@@ -435,65 +767,51 @@
             left: 0;
             color: var(--accent-color);
             font-weight: bold;
+            font-size: 16px;
         }
 
-        /* Tedavi Algoritması Bölümü */
-        .tedavi-accordion {
-            margin-top: 16px;
-            border-top: 1px dashed var(--border-color);
-            padding-top: 14px;
-        }
-
-        .tedavi-header {
-            padding: 13px 16px;
-            background: var(--card-sub-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            font-weight: 700;
-            color: var(--accent-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-            font-size: 14.5px;
-            transition: background-color 0.2s;
-        }
-        
-        .tedavi-header:hover { background: var(--accent-soft); }
-        .tedavi-header-sol { display: flex; align-items: center; gap: 8px; }
-        .tedavi-content { display: none; padding: 14px 2px 4px 2px; }
-        .tedavi-accordion.active .tedavi-content { display: block; }
-        .tedavi-accordion.active .tedavi-header .chevron-icon { transform: rotate(180deg); }
-
+        /* Tedavi Algoritması Blokları */
         .tedavi-blok {
-            margin-bottom: 12px;
-            padding: 12px 14px;
-            border-left: 4px solid #ccc;
-            border-radius: 6px 12px 12px 6px;
+            margin-bottom: 14px;
+            padding: 16px 18px;
+            border-left: 5px solid #ccc;
+            border-radius: 8px 16px 16px 8px;
+            box-shadow: var(--shadow-sm);
         }
-        .tedavi-blok:last-child { margin-bottom: 0; }
+        .tedavi-blok:last-child {
+            margin-bottom: 0;
+        }
 
         .tedavi-blok.border-yesil {
             border-left-color: var(--green-border);
             background: var(--green-bg);
+            border-top: 1px solid rgba(34, 197, 94, 0.2);
+            border-right: 1px solid rgba(34, 197, 94, 0.2);
+            border-bottom: 1px solid rgba(34, 197, 94, 0.2);
         }
         .tedavi-blok.border-sari {
             border-left-color: var(--yellow-border);
             background: var(--yellow-bg);
+            border-top: 1px solid rgba(234, 179, 8, 0.22);
+            border-right: 1px solid rgba(234, 179, 8, 0.22);
+            border-bottom: 1px solid rgba(234, 179, 8, 0.22);
         }
         .tedavi-blok.border-kirmizi {
             border-left-color: var(--red-border);
             background: var(--red-bg);
+            border-top: 1px solid rgba(239, 68, 68, 0.22);
+            border-right: 1px solid rgba(239, 68, 68, 0.22);
+            border-bottom: 1px solid rgba(239, 68, 68, 0.22);
         }
 
         .tedavi-blok-baslik {
-            font-size: 14px;
-            font-weight: 750;
-            margin-bottom: 8px;
+            font-size: 15px;
+            font-weight: 800;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            line-height: 1.4;
         }
         .tedavi-blok.border-yesil .tedavi-blok-baslik { color: var(--green-text); }
         .tedavi-blok.border-sari .tedavi-blok-baslik { color: var(--yellow-text); }
@@ -501,15 +819,27 @@
 
         ul.tedavi-liste {
             margin: 0;
-            padding-left: 18px;
-            font-size: 13.8px;
+            padding-left: 20px;
+            font-size: 14.3px;
             color: var(--text-main);
         }
-        ul.tedavi-liste li { margin-bottom: 5px; }
-        ul.tedavi-liste li:last-child { margin-bottom: 0; }
+        ul.tedavi-liste li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        ul.tedavi-liste li:last-child {
+            margin-bottom: 0;
+        }
 
-        .hidden { display: none !important; }
-        
+        .bottom-back-container {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
         .loading, .empty-state {
             text-align: center;
             padding: 50px 20px;
@@ -523,19 +853,23 @@
 
         footer {
             text-align: center;
-            margin-top: 36px;
-            font-size: 12px;
+            margin-top: 40px;
+            font-size: 12.5px;
             color: var(--text-muted);
         }
 
         @media (max-width: 600px) {
-            body { padding: 16px 12px 50px 12px; }
-            h1 { font-size: 25px; }
-            .accordion-header { padding: 15px 16px; font-size: 15.5px; }
-            .tani-header { padding: 12px 14px; }
+            body { padding: 14px 12px 55px 12px; }
+            h1 { font-size: 26px; }
+            .accordion-header { padding: 15px 16px; font-size: 15px; }
+            .tani-row-card { padding: 12px 14px; }
             .tani-baslik { font-size: 14.5px; }
             .search-box { padding: 14px 40px 14px 44px; font-size: 15px; }
-            ul.kriter-liste { margin-left: 12px; }
+            .detail-hero-card { padding: 18px 16px; }
+            .detail-title { font-size: 20px; }
+            .detail-section-card { padding: 16px 14px; }
+            ul.kriter-liste { margin-left: 8px; }
+            .detail-section-tabs { flex-direction: column; gap: 8px; }
         }
     </style>
 </head>
@@ -558,27 +892,105 @@
         </div>
     </div>
 
-    <header>
-        <div class="brand-badge">Klinik Karar Destek Sistemi</div>
-        <h1>DSM-5 Rehberi</h1>
-        <div class="subtitle">Tanı Ölçütleri & Pediatrik Tedavi Algoritmaları</div>
-    </header>
+    <!-- =========================================================
+         1. ANA LİSTE GÖRÜNÜMÜ (KATEGORİLER & ARAMA)
+         ========================================================= -->
+    <div id="homeView">
+        <header>
+            <div class="brand-badge">⚕️ Klinik Karar Destek Sistemi</div>
+            <h1>DSM-5 Klinik Rehberi</h1>
+            <div class="subtitle">Tanı Ölçütleri, Farmakoterapi, Çapraz Geçiş & CYP450 Algoritmaları</div>
+        </header>
 
-    <div class="search-container">
-        <div class="search-wrapper">
-            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="search" id="searchInput" class="search-box" autocomplete="off" placeholder="Tanı adı, ICD-10 kodu (örn. F90) veya etken madde ara...">
-            <button class="clear-btn" id="clearSearchBtn" title="Temizle">✕</button>
+        <div class="search-container">
+            <div class="search-wrapper">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="search" id="searchInput" class="search-box" autocomplete="off" placeholder="Tanı adı veya ICD-10 kodu (örn. Bipolar, DEHB, F90) ara...">
+                <button class="clear-btn" id="clearSearchBtn" title="Aramayı Temizle">✕</button>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <span id="statsCounter">Yükleniyor...</span>
+            <div class="toolbar-actions">
+                <button class="text-btn" id="expandAllBtn">Tümünü Aç</button>
+                <button class="text-btn" id="collapseAllBtn">Tümünü Daralt</button>
+            </div>
+        </div>
+
+        <div id="dsmContainer">
+            <div class="loading">Klinik veritabanı hazırlanıyor...</div>
         </div>
     </div>
 
-    <div class="toolbar">
-        <span id="statsCounter">Yükleniyor...</span>
-        <button class="text-btn" id="collapseAllBtn">Tümünü Daralt</button>
-    </div>
+    <!-- =========================================================
+         2. TANI DETAY GÖRÜNÜMÜ (SAYFA İÇİ ÖZEL TANI & TEDAVİ SAYFASI)
+         ========================================================= -->
+    <div id="detailView" class="hidden">
+        <div class="detail-nav-bar">
+            <button class="back-btn" id="backToListBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                <span>Listeye Dön</span>
+            </button>
+            <div class="detail-nav-Switchers">
+                <button class="nav-step-btn" id="prevTaniBtn" title="Önceki Tanı">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    <span>Önceki</span>
+                </button>
+                <button class="nav-step-btn" id="nextTaniBtn" title="Sonraki Tanı">
+                    <span>Sonraki</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+        </div>
 
-    <div id="dsmContainer">
-        <div class="loading">Klinik veritabanı hazırlanıyor...</div>
+        <!-- Tanı Başlık ve Meta Kartı -->
+        <div class="detail-hero-card">
+            <div class="detail-kategori-etiket" id="detailKategoriAdi">Kategori</div>
+            <h2 class="detail-title" id="detailTaniBaslik">Tanı Başlığı</h2>
+            <div class="detail-meta-row">
+                <span class="detail-icd-pill" id="detailIcdKod">ICD-10</span>
+                <span class="detail-stat-pill" id="detailKriterSayisi">0 Kriter</span>
+                <span class="detail-stat-pill" id="detailTedaviSayisi">0 Tedavi Basamağı</span>
+            </div>
+        </div>
+
+        <!-- Bölüm Hızlı Geçiş Butonları -->
+        <div class="detail-section-tabs">
+            <button class="section-tab-btn" id="scrollToKriterBtn">
+                <span>📋</span>
+                <span>DSM-5 Tanı Ölçütleri</span>
+            </button>
+            <button class="section-tab-btn" id="scrollToTedaviBtn">
+                <span>💊</span>
+                <span>Klinik Tedavi Algoritması</span>
+            </button>
+        </div>
+
+        <!-- DSM-5 Kriterleri Kartı -->
+        <div class="detail-section-card" id="kriterSectionCard">
+            <h3 class="section-header-title">
+                <span class="section-icon-box">📋</span>
+                <span>DSM-5 Tanı Ölçütleri</span>
+            </h3>
+            <div id="detailKriterContainer"></div>
+        </div>
+
+        <!-- Klinik Tedavi Algoritması Kartı -->
+        <div class="detail-section-card" id="tedaviSectionCard">
+            <h3 class="section-header-title">
+                <span class="section-icon-box">💊</span>
+                <span>Klinik Tedavi ve Farmakoterapi Algoritması</span>
+            </h3>
+            <div id="detailTedaviContainer"></div>
+        </div>
+
+        <div class="bottom-back-container">
+            <button class="back-btn" id="bottomBackBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                <span>Kategorilere ve Arama Ekranına Dön</span>
+            </button>
+        </div>
     </div>
 
     <footer>
@@ -592,16 +1004,29 @@
     const STORAGE_KEY = 'dsm5_klinik_veritabani_v2';
     const STORAGE_TIME_KEY = 'dsm5_son_guncelleme';
 
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
     let currentData = [];
+    let flatDiagnoses = []; // Önceki/Sonraki tanı geçişi için düzleştirilmiş referans listesi
+    let activeFlatIndex = -1;
+    let savedScrollPosition = 0; // Ana listeden detaya geçerken kaydedilen kaydırma konumu
 
     const CHEVRON_SVG = `<svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+    const ARROW_RIGHT_SVG = `<svg class="arrow-right-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+
+    // Güvenli LocalStorage yardımcı fonksiyonları
+    function safeGetStorage(key) {
+        try { return localStorage.getItem(key); } catch (e) { return null; }
+    }
+    function safeSetStorage(key, val) {
+        try { localStorage.setItem(key, val); } catch (e) {}
+    }
 
     document.addEventListener("DOMContentLoaded", () => {
         initTheme();
         loadDataWithFallback();
         setupSearch();
         setupToolbarActions();
+        setupDetailNavigation();
     });
 
     // Türkçe Karakter Duyarlı Normalizasyon
@@ -617,12 +1042,11 @@
             .replace(/ç/g, 'c');
     }
 
-    // 1. Önbellek + Canlı Veritabanı Senkronizasyonu (Pause & Offline Koruması)
+    // 1. Önbellek + Canlı Veritabanı Senkronizasyonu (Stale-While-Revalidate)
     async function loadDataWithFallback() {
-        const cachedRaw = localStorage.getItem(STORAGE_KEY);
-        const cachedTime = localStorage.getItem(STORAGE_TIME_KEY);
+        const cachedRaw = safeGetStorage(STORAGE_KEY);
+        const cachedTime = safeGetStorage(STORAGE_TIME_KEY);
 
-        // Önce hafızada veri varsa anında ekrana bas (Sıfır bekleme)
         if (cachedRaw) {
             try {
                 currentData = JSON.parse(cachedRaw);
@@ -633,7 +1057,8 @@
             }
         }
 
-        // Ardından arka planda Supabase'den güncel veriyi çek ve projeyi uyanık tut
+        if (!supabaseClient) return;
+
         try {
             const { data, error } = await supabaseClient
                 .from('dsm_kategoriler')
@@ -645,10 +1070,9 @@
             if (data && data.length > 0) {
                 currentData = data;
                 const nowStr = new Date().toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-                localStorage.setItem(STORAGE_TIME_KEY, nowStr);
-                
-                // Eğer önbellek yoksa veya yeni veri farklıysa ekranı güncelle
+                safeSetStorage(STORAGE_KEY, JSON.stringify(data));
+                safeSetStorage(STORAGE_TIME_KEY, nowStr);
+
                 if (!cachedRaw || cachedRaw !== JSON.stringify(data)) {
                     renderUI(data);
                 }
@@ -676,82 +1100,41 @@
         text.textContent = message;
     }
 
-    // 2. Arayüzü Oluşturma
+    // 2. Ana Liste Arayüzünü Oluşturma (Kategoriler Akordeon, Tanılar Tıklanabilir Satır)
     function renderUI(data) {
         const container = document.getElementById('dsmContainer');
         const fragment = document.createDocumentFragment();
-        let totalDiagnoses = 0;
+        flatDiagnoses = [];
 
-        data.forEach(kategori => {
+        data.forEach((kategori, catIdx) => {
             const accItem = document.createElement('div');
             accItem.className = 'accordion-item';
 
             let tanilarHTML = '';
             const taniListesi = Array.isArray(kategori.tanilar) ? kategori.tanilar : [];
-            totalDiagnoses += taniListesi.length;
 
-            taniListesi.forEach(tani => {
-                // Kriterleri oluştur
-                let kriterlerHTML = (tani.kriterler || []).map(k => `
-                    <div class="kriter-satir">
-                        <div class="kriter-tanim">
-                            <span class="kriter-harf">${k.harf}</span>
-                            <span>${k.tanim}</span>
-                        </div>
-                        ${k.maddeler && k.maddeler.length > 0 ? `<ul class="kriter-liste">${k.maddeler.map(m => `<li>${m}</li>`).join('')}</ul>` : ''}
-                    </div>
-                `).join('');
+            taniListesi.forEach((tani) => {
+                const flatIdx = flatDiagnoses.length;
+                flatDiagnoses.push({
+                    kategori_id: kategori.id,
+                    kategori_adi: kategori.kategori_adi,
+                    tani: tani
+                });
 
-                // Tedavi şeması varsa oluştur
-                let tedaviHTML = '';
                 const hasTedavi = tani.tedavi_algoritmasi && tani.tedavi_algoritmasi.length > 0;
-                let tedaviAramaMetni = '';
 
-                if (hasTedavi) {
-                    tedaviAramaMetni = tani.tedavi_algoritmasi.map(t => `${t.baslik} ${(t.maddeler || []).join(' ')}`).join(' ');
-                    
-                    let tedaviBloklari = tani.tedavi_algoritmasi.map(t => `
-                        <div class="tedavi-blok border-${t.renk_kodu}">
-                            <div class="tedavi-blok-baslik">${t.baslik}</div>
-                            <ul class="tedavi-liste">
-                                ${t.maddeler.map(m => `<li>${m}</li>`).join('')}
-                            </ul>
-                        </div>
-                    `).join('');
-
-                    tedaviHTML = `
-                        <div class="tedavi-accordion">
-                            <div class="tedavi-header">
-                                <div class="tedavi-header-sol">
-                                    <span>💊</span>
-                                    <span>Klinik Tedavi Algoritması</span>
-                                </div>
-                                ${CHEVRON_SVG}
-                            </div>
-                            <div class="tedavi-content">
-                                ${tedaviBloklari}
-                            </div>
-                        </div>
-                    `;
-                }
-
-                const rawSearchText = `${tani.baslik} ${tani.kod_icd10} ${tedaviAramaMetni}`;
+                // Yalnızca Tanı Başlığı, Kategori Adı ve ICD-10 Kodu üzerinden hedef odaklı arama
+                const rawSearchText = `${tani.baslik} ${tani.kod_icd10 || ''} ${kategori.kategori_adi}`;
                 const normalizedSearch = normalizeTR(rawSearchText);
 
                 tanilarHTML += `
-                    <div class="tani-card" data-search="${normalizedSearch}">
-                        <div class="tani-header">
-                            <div class="tani-baslik-container">
-                                <h3 class="tani-baslik">${tani.baslik}</h3>
-                                <span class="kod-badge">${tani.kod_icd10}</span>
-                                ${hasTedavi ? `<span class="tedavi-var-rozet">Tedavi Şemalı</span>` : ''}
-                            </div>
-                            ${CHEVRON_SVG}
+                    <div class="tani-row-card" data-flat-index="${flatIdx}" data-search="${normalizedSearch.replace(/"/g, '&quot;')}">
+                        <div class="tani-baslik-container">
+                            <h3 class="tani-baslik">${tani.baslik}</h3>
+                            <span class="kod-badge">${tani.kod_icd10 || ''}</span>
+                            ${hasTedavi ? `<span class="tedavi-var-rozet">💊 Tedavi Algoritmalı</span>` : ''}
                         </div>
-                        <div class="tani-content">
-                            ${kriterlerHTML}
-                            ${tedaviHTML}
-                        </div>
+                        ${ARROW_RIGHT_SVG}
                     </div>
                 `;
             });
@@ -759,6 +1142,7 @@
             accItem.innerHTML = `
                 <div class="accordion-header">
                     <div class="kategori-sol">
+                        <span class="kategori-no">${catIdx + 1}</span>
                         <span>${kategori.kategori_adi}</span>
                     </div>
                     <div style="display:flex; align-items:center; gap:10px;">
@@ -776,31 +1160,155 @@
         container.innerHTML = '';
         container.appendChild(fragment);
 
-        document.getElementById('statsCounter').textContent = `${data.length} Kategori • ${totalDiagnoses} Tanı`;
+        document.getElementById('statsCounter').textContent = `${data.length} Kategori • ${flatDiagnoses.length} Tanı`;
 
-        // Event Listener'lar
+        // Ana Kategori Başlığına Tıklanınca Akordeon Aç/Kapat
         document.querySelectorAll('.accordion-header').forEach(header => {
             header.addEventListener('click', function() {
                 this.parentElement.classList.toggle('active');
             });
         });
 
-        document.querySelectorAll('.tani-header').forEach(header => {
-            header.addEventListener('click', function(e) {
+        // Tanı Satırına Tıklanınca Özel Tanı Detay Sayfasına Geç
+        document.querySelectorAll('.tani-row-card').forEach(card => {
+            card.addEventListener('click', function(e) {
                 e.stopPropagation();
-                this.parentElement.classList.toggle('active');
-            });
-        });
-
-        document.querySelectorAll('.tedavi-header').forEach(header => {
-            header.addEventListener('click', function(e) {
-                e.stopPropagation();
-                this.parentElement.classList.toggle('active');
+                const idx = parseInt(this.getAttribute('data-flat-index'), 10);
+                openDiagnosisDetail(idx, true);
             });
         });
     }
 
-    // 3. Arama Motoru
+    // 3. Tanı Detay Sayfasını Açma ve Kapatma (Durumu ve Scroll'u Koruyarak)
+    function openDiagnosisDetail(flatIdx, saveScroll = true) {
+        const item = flatDiagnoses[flatIdx];
+        if (!item) return;
+
+        if (saveScroll && !document.getElementById('homeView').classList.contains('hidden')) {
+            savedScrollPosition = window.scrollY || document.documentElement.scrollTop || 0;
+        }
+
+        activeFlatIndex = flatIdx;
+        const tani = item.tani;
+        const kriterler = Array.isArray(tani.kriterler) ? tani.kriterler : [];
+        const tedaviler = Array.isArray(tani.tedavi_algoritmasi) ? tani.tedavi_algoritmasi : [];
+
+        // Başlık ve Meta Bilgileri
+        document.getElementById('detailKategoriAdi').textContent = item.kategori_adi;
+        document.getElementById('detailTaniBaslik').textContent = tani.baslik;
+        document.getElementById('detailIcdKod').textContent = `ICD-10: ${tani.kod_icd10 || '-'}`;
+        document.getElementById('detailKriterSayisi').textContent = `${kriterler.length} Tanı Ölçütü`;
+        document.getElementById('detailTedaviSayisi').textContent = `${tedaviler.length} Klinik Basamak`;
+
+        // DSM-5 Kriterlerini Doldur
+        const kriterContainer = document.getElementById('detailKriterContainer');
+        if (kriterler.length > 0) {
+            kriterContainer.innerHTML = kriterler.map(k => `
+                <div class="kriter-satir">
+                    <div class="kriter-tanim">
+                        <span class="kriter-harf">${k.harf || '•'}</span>
+                        <span>${k.tanim || ''}</span>
+                    </div>
+                    ${k.maddeler && k.maddeler.length > 0 ? `<ul class="kriter-liste">${k.maddeler.map(m => `<li>${m}</li>`).join('')}</ul>` : ''}
+                </div>
+            `).join('');
+        } else {
+            kriterContainer.innerHTML = `<div class="empty-state">Bu tanı için alt ölçüt kaydı bulunmamaktadır.</div>`;
+        }
+
+        // Klinik Tedavi Algoritmasını Doldur
+        const tedaviContainer = document.getElementById('detailTedaviContainer');
+        if (tedaviler.length > 0) {
+            tedaviContainer.innerHTML = tedaviler.map(t => `
+                <div class="tedavi-blok border-${t.renk_kodu || 'yesil'}">
+                    <div class="tedavi-blok-baslik">${t.baslik || ''}</div>
+                    <ul class="tedavi-liste">
+                        ${(t.maddeler || []).map(m => `<li>${m}</li>`).join('')}
+                    </ul>
+                </div>
+            `).join('');
+        } else {
+            tedaviContainer.innerHTML = `<div class="empty-state">Bu tanı için tedavi algoritması bulunmamaktadır.</div>`;
+        }
+
+        // Önceki / Sonraki Buton Durumları
+        document.getElementById('prevTaniBtn').disabled = (flatIdx <= 0);
+        document.getElementById('nextTaniBtn').disabled = (flatIdx >= flatDiagnoses.length - 1);
+
+        // Görünümü Değiştir (Ana listeyi gizle, detay görünümünü göster)
+        document.getElementById('homeView').classList.add('hidden');
+        document.getElementById('detailView').classList.remove('hidden');
+
+        // Tarayıcı geri tuşu desteği için History state ekle
+        try {
+            if (window.location.hash !== `#tani-${flatIdx}`) {
+                history.pushState({ view: 'detail', flatIdx: flatIdx }, '', `#tani-${flatIdx}`);
+            }
+        } catch (e) {}
+
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    function closeDiagnosisDetail(fromPopState = false) {
+        document.getElementById('detailView').classList.add('hidden');
+        document.getElementById('homeView').classList.remove('hidden');
+        activeFlatIndex = -1;
+
+        if (!fromPopState && window.location.hash.startsWith('#tani-')) {
+            try {
+                history.pushState({ view: 'home' }, '', window.location.pathname + window.location.search);
+            } catch (e) {}
+        }
+
+        // Kullanıcının bıraktığı tam scroll konumuna geri dön
+        requestAnimationFrame(() => {
+            window.scrollTo({ top: savedScrollPosition, behavior: 'instant' });
+        });
+    }
+
+    function setupDetailNavigation() {
+        document.getElementById('backToListBtn').addEventListener('click', () => closeDiagnosisDetail(false));
+        document.getElementById('bottomBackBtn').addEventListener('click', () => closeDiagnosisDetail(false));
+
+        document.getElementById('prevTaniBtn').addEventListener('click', () => {
+            if (activeFlatIndex > 0) {
+                openDiagnosisDetail(activeFlatIndex - 1, false);
+            }
+        });
+
+        document.getElementById('nextTaniBtn').addEventListener('click', () => {
+            if (activeFlatIndex < flatDiagnoses.length - 1) {
+                openDiagnosisDetail(activeFlatIndex + 1, false);
+            }
+        });
+
+        document.getElementById('scrollToKriterBtn').addEventListener('click', () => {
+            document.getElementById('kriterSectionCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        document.getElementById('scrollToTedaviBtn').addEventListener('click', () => {
+            document.getElementById('tedaviSectionCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+
+        // Mobil/Masaüstü donanımsal geri tuşu ve ESC tuşu desteği
+        window.addEventListener('popstate', (e) => {
+            if (e.state && e.state.view === 'detail' && typeof e.state.flatIdx === 'number') {
+                openDiagnosisDetail(e.state.flatIdx, false);
+            } else {
+                if (!document.getElementById('detailView').classList.contains('hidden')) {
+                    closeDiagnosisDetail(true);
+                }
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !document.getElementById('detailView').classList.contains('hidden')) {
+                closeDiagnosisDetail(false);
+            }
+        });
+    }
+
+    // 4. Türkçe Karakter Duyarlı Canlı Arama Motoru
     function setupSearch() {
         const searchInput = document.getElementById('searchInput');
         const clearBtn = document.getElementById('clearSearchBtn');
@@ -811,39 +1319,47 @@
             clearBtn.style.display = rawQuery.length > 0 ? 'flex' : 'none';
 
             const accordions = document.querySelectorAll('.accordion-item');
+            let matchedDiagnoses = 0;
+            let matchedCategories = 0;
 
             accordions.forEach(acc => {
-                const tanilar = acc.querySelectorAll('.tani-card');
+                const tanilar = acc.querySelectorAll('.tani-row-card');
                 let hasVisibleCard = false;
 
                 tanilar.forEach(card => {
-                    const searchableText = card.getAttribute('data-search');
+                    const searchableText = card.getAttribute('data-search') || '';
                     if (query === '') {
-                        card.classList.remove('hidden', 'active');
+                        card.classList.remove('hidden');
+                        matchedDiagnoses++;
                     } else if (searchableText.includes(query)) {
                         card.classList.remove('hidden');
-                        card.classList.add('active');
                         hasVisibleCard = true;
+                        matchedDiagnoses++;
                     } else {
                         card.classList.add('hidden');
-                        card.classList.remove('active');
                     }
                 });
 
                 if (query === '') {
                     acc.classList.remove('hidden', 'active');
+                    matchedCategories++;
                 } else if (hasVisibleCard) {
                     acc.classList.remove('hidden');
                     acc.classList.add('active');
+                    matchedCategories++;
                 } else {
                     acc.classList.add('hidden');
                     acc.classList.remove('active');
                 }
             });
+
+            document.getElementById('statsCounter').textContent = query === ''
+                ? `${accordions.length} Kategori • ${flatDiagnoses.length} Tanı`
+                : `${matchedCategories} Kategori • ${matchedDiagnoses} Eşleşen Tanı`;
         };
 
         searchInput.addEventListener('input', () => requestAnimationFrame(performSearch));
-        
+
         clearBtn.addEventListener('click', () => {
             searchInput.value = '';
             performSearch();
@@ -851,16 +1367,16 @@
         });
     }
 
-    // 4. Gece Modu ve Araçlar
+    // 5. Gece / Gündüz Modu ve Araç Çubuğu İşlevleri
     function initTheme() {
-        const savedTheme = localStorage.getItem('dsm5_theme') || 'light';
+        const savedTheme = safeGetStorage('dsm5_theme') || 'light';
         applyTheme(savedTheme);
 
         document.getElementById('themeToggle').addEventListener('click', () => {
             const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
             const next = current === 'dark' ? 'light' : 'dark';
             applyTheme(next);
-            localStorage.setItem('dsm5_theme', next);
+            safeSetStorage('dsm5_theme', next);
         });
     }
 
@@ -869,19 +1385,26 @@
         const icon = document.getElementById('themeIcon');
         if (theme === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
-            metaTheme.setAttribute('content', '#0B0F19');
+            metaTheme.setAttribute('content', '#090D16');
             icon.innerHTML = `<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
         } else {
             document.documentElement.removeAttribute('data-theme');
-            metaTheme.setAttribute('content', '#F2F4F8');
+            metaTheme.setAttribute('content', '#F2F5FA');
             icon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
         }
     }
 
     function setupToolbarActions() {
+        // Tümünü Aç
+        document.getElementById('expandAllBtn').addEventListener('click', () => {
+            document.querySelectorAll('.accordion-item:not(.hidden)').forEach(el => {
+                el.classList.add('active');
+            });
+        });
+
         // Tümünü Daralt
         document.getElementById('collapseAllBtn').addEventListener('click', () => {
-            document.querySelectorAll('.accordion-item.active, .tani-card.active, .tedavi-accordion.active').forEach(el => {
+            document.querySelectorAll('.accordion-item.active').forEach(el => {
                 el.classList.remove('active');
             });
         });
